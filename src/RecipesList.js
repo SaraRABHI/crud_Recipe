@@ -1,8 +1,6 @@
 import React from 'react';
-import Back from './C.jpg';
-import {Image} from 'react-bootstrap'
 
-// Modal
+
 
 
 import { Button, Row, Container, Col, Modal, Form } from 'react-bootstrap'
@@ -22,65 +20,45 @@ class RecipesList extends React.Component {
     
   }
 
-  
-
-  /*componentWillMount(){
-    const localRef
-    if(storageAvailable('localStorage')){
-      localRef = localStorage.setItem('Recipes',JSON.stringify(this.state.Recipes));
-    }
-    if(localRef){
-      this.setState({
-        Recipes : JSON.parse(localRef)
-      })
-    }
-    else{
-      console.error("Your browser doesn\'t support local storage");
-    }
-  }
-
-  /*componentDidMount(){
-    
-    if(!localStorage.getItem('Recipes')){
-      this.fetchData();
-    }
-    else{
-      console.log("Using Data from Local Storage");
-    }
-  }*/
-
-  /*componentWillUpdate(nextProps, nextState){
-    if(storageAvailable('localStorage')){
-      const ref = localStorage.setItem('Recipes',JSON.stringify(nextState.Recipes));
-    }
-    else{
-      console.error("Your browser doesn\'t support local storage");
-    }
-  }*/
-
+  //Delete a recipe
   handleDelete = (id) => {
-    const recipes = [...this.state.Recipes];
+    /*const recipes = [...this.state.Recipes];
+    recipes.splice(id,1);
     
-    const newRecipes = recipes.filter((recipe) => recipe.id !== id);
     localStorage.setItem('recipes', JSON.stringify(recipes));
 
     this.setState({
       ...this.state,
-      Recipes: newRecipes
+      Recipes: recipes
+    });*/
+
+    const recipes = [...this.state.Recipes];
+
+    const Id = recipes.findIndex(
+      function(recipe){
+        return recipe.id === id
+      }
+    )
+    recipes.splice(Id, 1);
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+    this.setState({
+      ...this.state,
+      Recipes: recipes
     });
 
     // close modal
     this.handleClose()
   }
 
-
+  //Add a recipe
   handleAdd = () => {
     const last = Date.now();
+    let recipes = [];
 
-    // hide modal
-    const recipes = [...this.state.Recipes];
+    if(this.state.Recipes != null){
+      recipes = [...this.state.Recipes];
+    }
     
-
     const recipeToAdd = this.state.newRecipe;
 
     recipeToAdd['id'] = `recipe${last}`
@@ -96,30 +74,7 @@ class RecipesList extends React.Component {
 
   }
 
-  handleEditName = (nom, id) => {
-    
-    const recipes = [...this.state.Recipes];
-    localStorage.setItem('recipes', JSON.stringify(recipes));
-    this.setState({
-      id: id,
-      nom: this.state.currentRecipe.nom,
-      ingredients: recipes.ingredients
-    })
-
-  }
-
-  handleEditIngredient = (ingredients, id) => {
-    
-    const recipes = [...this.state.Recipes];
-    localStorage.setItem('recipes', JSON.stringify(recipes));
-    this.setState({
-      id: id,
-      nom: recipes.nom,
-      ingredients: this.state.currentRecipe.nom
-    })
-
-  }
-
+  //Change value
   handleChange = (event) => {
     const value = event.currentTarget.value;
     
@@ -127,6 +82,7 @@ class RecipesList extends React.Component {
 
   }
 
+  //Close modal
   handleClose = () =>{
     
     this.setState((state) => {
@@ -138,6 +94,7 @@ class RecipesList extends React.Component {
     });
   } 
 
+  //Close EditModal
   handleEditClose = () => {
     
     this.setState((state) => {
@@ -148,6 +105,7 @@ class RecipesList extends React.Component {
     });
   } 
 
+  //Close addModal
   handleAddClose = () =>{
     
     this.setState((state) => {
@@ -158,12 +116,11 @@ class RecipesList extends React.Component {
     });
   } 
 
+  //Show Modal
   handleShow = (id) => {
     // get recipe by id
     const recipe = this.state.Recipes.find((recipe) => recipe.id === id);
     console.log(recipe);
-
-    
 
     // set current recipe to show & show modal
     this.setState((state) => {
@@ -179,11 +136,22 @@ class RecipesList extends React.Component {
     })
   };
 
+  //Edit Recipe
   handleEdit = (event,id) =>{
-
     
     const last = Date.now();
     const recipes = [...this.state.Recipes];
+
+    const Id = recipes.findIndex(
+      function(recipe){
+        return recipe.id === id
+      }
+    )
+    recipes.splice(Id, 1);
+    this.setState({
+      ...this.state,
+      Recipes: recipes
+    });
 
     const recipeToEdit = this.state.currentRecipe;
 
@@ -197,21 +165,22 @@ class RecipesList extends React.Component {
       modalEdit: false
       
     });
-
+  
     
-    
-    const currentRecipes = recipes.filter((recipe) => recipe.id !== id);
+    /*this.state.currentRecipe = recipes.filter((recipe) => recipe.id !== id);
+    recipes.splice(this.state.currentRecipe.id,1);
     localStorage.setItem('recipes', JSON.stringify(recipes));
 
     this.setState({
       ...this.state,
-      Recipes: currentRecipes
-    });
+      Recipes: this.state.currentRecipe
+    });*/
 
     // close modal
     this.handleClose()
   }
 
+  //Local Storage
   getRecordsFromLocalStorage = () => {
     let recs = localStorage.getItem('recipes');
     let recsParsed = JSON.parse(recs);
@@ -325,15 +294,22 @@ class RecipesList extends React.Component {
               >Submit</button>
             </div>
       </Modal>
-        <Row>
+        <div>
         
         {
-          //this.state.Recipes!= null?
-            <div>{
+          (this.state.Recipes=== null) ?
+          <h1 className="text-center">You don't have any resipe</h1>
+            
+            :
+            this.state.Recipes.length===0?
+            <h1 className="text-center">You don't have any resipe</h1>
+            :  
+            <Row>{
               this.state.Recipes.map((recipe)  => {
                 
                   return (
-                  <div class="col-md-6 text-center mb-3">
+                    
+                      <div class="col-md-6 text-center mb-3">
                     <div class="card">
                       <div
                         onClick={this.handleShow.bind(this, recipe.id)}
@@ -344,21 +320,10 @@ class RecipesList extends React.Component {
                     </div>
                   </div>
                 );
-              
-            
-              
-              
             })
-  }</div>
-            //:
-
-            //<h1 className="text-center">You dont have any resipe</h1>
-            
-            
-  }
-          
-          
-        </Row>
+  }</Row>
+  }   
+        </div>
       </Container>
       </div>
     );
