@@ -1,4 +1,6 @@
 import React from 'react';
+import Back from './C.jpg';
+import {Image} from 'react-bootstrap'
 
 // Modal
 
@@ -77,6 +79,7 @@ class RecipesList extends React.Component {
 
     // hide modal
     const recipes = [...this.state.Recipes];
+    
 
     const recipeToAdd = this.state.newRecipe;
 
@@ -217,7 +220,7 @@ class RecipesList extends React.Component {
 
   componentDidMount(){
     let Recipes = JSON.parse(localStorage.getItem("Recipes")) || [];
-    this.setState({Recipes});
+    this.setState({Recipes:this.getRecordsFromLocalStorage()});
   }
 
 
@@ -323,22 +326,38 @@ class RecipesList extends React.Component {
             </div>
       </Modal>
         <Row>
+        
         {
-          this.state.Recipes.map((recipe) => {
-            return (
-              <div class="col-md-6 text-center mb-3">
-                <div class="card">
-                  <div
-                    onClick={this.handleShow.bind(this, recipe.id)}
-                    class="card-body text-primary" 
-                    style={{cursor: 'pointer'}}>
-                    {recipe.nom}
+          //this.state.Recipes!= null?
+            <div>{
+              this.state.Recipes.map((recipe)  => {
+                
+                  return (
+                  <div class="col-md-6 text-center mb-3">
+                    <div class="card">
+                      <div
+                        onClick={this.handleShow.bind(this, recipe.id)}
+                        class="card-body text-primary" 
+                        style={{cursor: 'pointer'}}>
+                        {recipe.nom}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })
-        }
+                );
+              
+            
+              
+              
+            })
+  }</div>
+            //:
+
+            //<h1 className="text-center">You dont have any resipe</h1>
+            
+            
+  }
+          
+          
         </Row>
       </Container>
       </div>
